@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DJ let's go home!</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      background: #1a1a2e;
+      touch-action: manipulation;
+    }
+
+    /* ─── SCREENS ─────────────────────────────── */
+    .screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.7s ease;
+    }
+    .screen.off {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ─── TITLE ────────────────────────────────── */
+    #s-title {
+      background: linear-gradient(145deg, #0f0c29 0%, #1a1a2e 50%, #0f3460 100%);
+      z-index: 10;
+    }
+    .title-floats {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .fb {
+      position: absolute;
+      font-size: 2.2rem;
+      opacity: 0.07;
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp {
+      from { transform: translateY(110vh) rotate(0deg); }
+      to   { transform: translateY(-120px) rotate(360deg); }
+    }
+    .title-box {
+      position: relative;
+      text-align: center;
+      z-index: 2;
+    }
+    .t-main {
+      font-size: clamp(2.2rem, 7vw, 4.2rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.6rem;
+    }
+    .t-main em { color: #ff9f52; font-style: normal; }
+    .t-sub {
+      color: rgba(255,255,255,0.4);
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      letter-spacing: 0.08em;
+      margin-bottom: 2.8rem;
+    }
+    .btn-start {
+      background: #ff9f52;
+      color: #fff;
+      border: none;
+      padding: 0.95rem 3.2rem;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(255,159,82,0.45);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .btn-start:hover  { transform: scale(1.06); box-shadow: 0 6px 32px rgba(255,159,82,0.6); }
+    .btn-start:active { transform: scale(0.96); }
+
+    /* ─── GAME ─────────────────────────────────── */
+    #s-game {
+      background: linear-gradient(180deg, #ede8e0 0%, #e0d9ce 100%);
+      align-items: flex-start;
+      justify-content: flex-start;
+      z-index: 5;
+    }
+    #game-area { position: absolute; inset: 0; }
+    #hint {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      color: rgba(0,0,0,0.28);
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      z-index: 20;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+
+    /* ─── HOME BUTTONS ─────────────────────────── */
+    .hb {
+      position: absolute;
+      width: 82px;
+      height: 82px;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-weight: 600;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: transform 0.12s;
+      will-change: transform, opacity;
+    }
+    .hb .ico  { font-size: 1.7rem; line-height: 1; pointer-events: none; }
+    .hb .lbl  { font-size: 0.68rem; letter-spacing: 0.02em; pointer-events: none; }
+
+    /* fake hover */
+    .hb.fake:hover  { transform: scale(1.09) rotate(2deg); }
+    .hb.fake:active { transform: scale(0.91); }
+
+    /* real button */
+    .hb.real {
+      background: #fff4ea !important;
+      color: #b35800 !important;
+      box-shadow: 0 2px 14px rgba(179,88,0,0.13) !important;
+    }
+    .hb.real:hover  { transform: scale(1.04); }
+    .hb.real:active { transform: scale(0.96); }
+
+    /* real pulse — activates when few buttons remain */
+    .hb.real.pulse {
+      animation: warmPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes warmPulse {
+      0%,100% { box-shadow: 0 2px 14px rgba(179,88,0,0.13); }
+      50%      { box-shadow: 0 0 28px rgba(255,160,70,0.55), 0 2px 14px rgba(179,88,0,0.1); }
+    }
+
+    /* pop animation */
+    .hb.popping {
+      animation: popOut 0.22s ease-in forwards;
+      pointer-events: none;
+    }
+    @keyframes popOut {
+      0%   { transform: scale(1);    opacity: 1; }
+      28%  { transform: scale(1.14); opacity: 0.9; }
+      100% { transform: scale(0);    opacity: 0; }
+    }
+
+    /* particle */
+    .pt {
+      position: fixed;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: ptFly 0.32s ease-out forwards;
+      z-index: 999;
+    }
+    @keyframes ptFly {
+      0%   { transform: translate(0,0) scale(1);   opacity: 0.75; }
+      100% { transform: translate(var(--dx),var(--dy)) scale(0); opacity: 0; }
+    }
+
+    /* ─── WHITE FLASH OVERLAY ──────────────────── */
+    #flash {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 50;
+      transition: opacity 0.55s ease;
+    }
+
+    /* ─── ENDING ───────────────────────────────── */
+    #s-ending {
+      background: #180e05;
+      z-index: 8;
+    }
+    /* room layers */
+    .room-wall {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 58%;
+      background: linear-gradient(180deg, #251508 0%, #3a2010 100%);
+    }
+    .room-floor {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 44%;
+      background: linear-gradient(180deg, #2e1a0c 0%, #1e1008 100%);
+    }
+    .room-join {
+      position: absolute;
+      top: 55%;
+      left: 0; right: 0;
+      height: 6%;
+      background: #1e1008;
+    }
+
+    /* window */
+    .win {
+      position: absolute;
+      top: 7%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(190px, 38vw);
+      height: min(150px, 30vw);
+      background: linear-gradient(160deg, #111e35 0%, #1a2d50 45%, #28180a 100%);
+      border: 5px solid #5a3818;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .win-h {
+      position: absolute; top: 50%; left: 0; right: 0;
+      height: 4px; background: #5a3818; transform: translateY(-50%);
+    }
+    .win-v {
+      position: absolute; left: 50%; top: 0; bottom: 0;
+      width: 4px; background: #5a3818; transform: translateX(-50%);
+    }
+    .win-glow {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 30%, rgba(180,200,255,0.06) 0%, transparent 70%);
+    }
+    /* stars injected via JS */
+    .star {
+      position: absolute;
+      width: 2px; height: 2px;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0.2; } 50% { opacity: 0.95; }
+    }
+    .moon-el {
+      position: absolute;
+      top: 12%; right: 16%;
+      width: min(28px,5vw); height: min(28px,5vw);
+      background: #ffe9a0;
+      border-radius: 50%;
+      box-shadow: 0 0 14px rgba(255,233,160,0.55);
+    }
+
+    /* lamp */
+    .lamp-wrap {
+      position: absolute;
+      bottom: 43%;
+      right: min(12%, 60px);
+    }
+    .lamp-shade {
+      width: 52px; height: 36px;
+      background: linear-gradient(180deg, #c8a050 0%, #e8c078 100%);
+      clip-path: polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%);
+      border-radius: 3px;
+      margin-left: -10px;
+    }
+    .lamp-neck {
+      width: 7px; height: 70px;
+      background: #7a5c38;
+      border-radius: 4px;
+      margin-left: 16px;
+    }
+    .lamp-foot {
+      width: 38px; height: 9px;
+      background: #7a5c38;
+      border-radius: 5px;
+      margin-left: 0;
+    }
+    .lamp-glow {
+      position: absolute;
+      bottom: 43%;
+      right: min(12%, 60px);
+      width: 160px; height: 140px;
+      margin-right: -55px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255,210,100,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* table + mug */
+    .table-el {
+      position: absolute;
+      bottom: 43.5%;
+      left: min(10%, 50px);
+      width: min(110px, 20vw);
+      height: 9px;
+      background: #5c3a1e;
+      border-radius: 4px;
+    }
+    .mug-el {
+      position: absolute;
+      bottom: calc(43.5% + 7px);
+      left: calc(min(10%, 50px) + 12px);
+      width: 26px; height: 30px;
+      background: #eddfc0;
+      border-radius: 3px 3px 6px 6px;
+    }
+    .mug-handle {
+      position: absolute;
+      bottom: calc(43.5% + 14px);
+      left: calc(min(10%, 50px) + 37px);
+      width: 9px; height: 14px;
+      border: 3px solid #eddfc0;
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+    }
+    .steam-wrap {
+      position: absolute;
+      bottom: calc(43.5% + 37px);
+      left: calc(min(10%, 50px) + 18px);
+      display: flex; gap: 5px;
+    }
+    .steam-line {
+      width: 2px; height: 14px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 1px;
+      animation: steamUp 1.8s ease-in-out infinite;
+    }
+    .steam-line:nth-child(2) { animation-delay: 0.35s; }
+    .steam-line:nth-child(3) { animation-delay: 0.7s; }
+    @keyframes steamUp {
+      0%   { transform: translateY(0)    scaleX(1);   opacity: 0.35; }
+      100% { transform: translateY(-14px) scaleX(0.4); opacity: 0; }
+    }
+
+    /* rug hint */
+    .rug-el {
+      position: absolute;
+      bottom: 42.5%;
+      left: 50%; transform: translateX(-50%);
+      width: min(280px, 55vw);
+      height: min(60px, 8vw);
+      background: radial-gradient(ellipse, rgba(90,40,20,0.55) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    /* ending text */
+    .end-msg {
+      position: absolute;
+      bottom: 22%;
+      left: 50%; transform: translateX(-50%);
+      color: rgba(255,215,150,0.88);
+      font-size: clamp(1.3rem, 4vw, 2rem);
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+      opacity: 0;
+      animation: fadeUp 2s ease 1.4s forwards;
+    }
+    .end-replay {
+      position: absolute;
+      bottom: 11%;
+      left: 50%; transform: translateX(-50%);
+      background: rgba(255,200,110,0.12);
+      border: 1px solid rgba(255,200,110,0.28);
+      color: rgba(255,200,110,0.6);
+      padding: 0.5rem 1.6rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeUp 1s ease 3.2s forwards;
+      transition: background 0.25s, color 0.25s;
+    }
+    .end-replay:hover {
+      background: rgba(255,200,110,0.22);
+      color: rgba(255,200,110,0.9);
+    }
+    .end-ambient {
+      position: absolute;
+      bottom: 5%;
+      left: 50%; transform: translateX(-50%);
+      background: transparent;
+      border: 1px solid rgba(255,200,110,0.2);
+      color: rgba(255,200,110,0.45);
+      padding: 0.4rem 1.2rem;
+      border-radius: 30px;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeUp 1s ease 3.8s forwards;
+      transition: background 0.25s, color 0.25s;
+    }
+    .end-ambient:hover { color: rgba(255,200,110,0.75); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TITLE ──────────────────────────────────── -->
+<div id="s-title" class="screen">
+  <div class="title-floats" id="titleFloats"></div>
+  <div class="title-box">
+    <h1 class="t-main">DJ <em>let's go</em><br>home !</h1>
+    <p class="t-sub">진짜 홈버튼을 찾아라</p>
+    <button class="btn-start" onclick="startGame()">시작하기 🏠</button>
+  </div>
+</div>
+
+<!-- ── GAME ───────────────────────────────────── -->
+<div id="s-game" class="screen off">
+  <div id="hint">집으로 가는 진짜 버튼을 찾아라</div>
+  <div id="game-area"></div>
+</div>
+
+<!-- ── WHITE FLASH ─────────────────────────────── -->
+<div id="flash"></div>
+
+<!-- ── ENDING ─────────────────────────────────── -->
+<div id="s-ending" class="screen off">
+  <div class="room-wall"></div>
+  <div class="room-floor"></div>
+  <div class="room-join"></div>
+
+  <div class="win" id="win">
+    <div class="win-h"></div>
+    <div class="win-v"></div>
+    <div class="win-glow"></div>
+  </div>
+
+  <div class="lamp-glow"></div>
+  <div class="lamp-wrap">
+    <div class="lamp-shade"></div>
+    <div class="lamp-neck"></div>
+    <div class="lamp-foot"></div>
+  </div>
+
+  <div class="rug-el"></div>
+  <div class="table-el"></div>
+  <div class="mug-el"></div>
+  <div class="mug-handle"></div>
+  <div class="steam-wrap">
+    <div class="steam-line"></div>
+    <div class="steam-line"></div>
+    <div class="steam-line"></div>
+  </div>
+
+  <p class="end-msg">잘 찾아왔어요.</p>
+  <button class="end-ambient" id="ambientBtn" onclick="toggleAmbient()">♪ 빗소리 켜기</button>
+  <button class="end-replay" onclick="replay()">다시하기</button>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   AUDIO
+══════════════════════════════════════ */
+let actx = null;
+let ambSrc = null, ambGain = null, ambOn = false;
+
+function getCtx() {
+  if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+  return actx;
+}
+
+function playPop(real = false) {
+  try {
+    const ctx = getCtx();
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    if (real) {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(500, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(380, ctx.currentTime + 0.35);
+      gain.gain.setValueAtTime(0.22, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(); osc.stop(ctx.currentTime + 0.4);
+    } else {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(280, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + 0.11);
+      gain.gain.setValueAtTime(0.18, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.11);
+      osc.start(); osc.stop(ctx.currentTime + 0.12);
+    }
+  } catch(e) {}
+}
+
+function startAmbient() {
+  try {
+    const ctx = getCtx();
+    const sr  = ctx.sampleRate;
+    const buf = ctx.createBuffer(1, sr * 3, sr);
+    const d   = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+
+    const src = ctx.createBufferSource();
+    src.buffer = buf; src.loop = true;
+
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 600; lp.Q.value = 0.8;
+
+    const g = ctx.createGain(); g.gain.value = 0;
+    src.connect(lp); lp.connect(g); g.connect(ctx.destination);
+    src.start();
+    g.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 1);
+    ambSrc = src; ambGain = g; ambOn = true;
+  } catch(e) {}
+}
+
+function stopAmbient() {
+  if (!ambSrc) return;
+  try {
+    ambGain.gain.linearRampToValueAtTime(0, getCtx().currentTime + 0.6);
+    setTimeout(() => { try { ambSrc.stop(); } catch(e) {} ambSrc = null; ambGain = null; }, 700);
+    ambOn = false;
+  } catch(e) {}
+}
+
+function toggleAmbient() {
+  const btn = document.getElementById('ambientBtn');
+  if (ambOn) { stopAmbient(); btn.textContent = '♪ 빗소리 켜기'; }
+  else       { startAmbient(); btn.textContent = '♪ 빗소리 끄기'; }
+}
+
+/* ══════════════════════════════════════
+   TITLE
+══════════════════════════════════════ */
+(function initTitleFloats() {
+  const c = document.getElementById('titleFloats');
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('div');
+    el.className = 'fb';
+    el.textContent = '🏠';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.fontSize = (1.4 + Math.random() * 1.8) + 'rem';
+    el.style.animationDuration  = (10 + Math.random() * 14) + 's';
+    el.style.animationDelay     = (-Math.random() * 24) + 's';
+    c.appendChild(el);
+  }
+})();
+
+/* ══════════════════════════════════════
+   GAME STATE
+══════════════════════════════════════ */
+const TOTAL   = 38;
+const LABELS  = [
+  ['🏠','Home'],['🏠','집으로'],['🏠','홈'],['🏠','HOME'],
+  ['🏡','돌아가기'],['🏠','Go Home'],['🏡','홈으로'],['🏠','집'],
+  ['🏠','Return'],['🏡','귀가'],['🏠','복귀'],['🏡','Back'],
+  ['🏠','여기'],['🏡','거기'],['🏠','저기'],['🏡','이쪽'],
+];
+const COLORS  = [
+  { bg:'#dde8f5', color:'#2a5080', sh:'rgba(42,80,128,0.13)' },
+  { bg:'#e8ddf5', color:'#502a80', sh:'rgba(80,42,128,0.13)' },
+  { bg:'#ddf5ea', color:'#2a8055', sh:'rgba(42,128,85,0.13)' },
+  { bg:'#f5f0dd', color:'#806a2a', sh:'rgba(128,106,42,0.13)' },
+  { bg:'#f5dde2', color:'#802a3a', sh:'rgba(128,42,58,0.13)' },
+  { bg:'#ddf4f5', color:'#2a7a80', sh:'rgba(42,122,128,0.13)' },
+  { bg:'#f0f0f0', color:'#555',    sh:'rgba(0,0,0,0.1)' },
+];
+
+let realIdx = -1;
+let remaining = 0;
+let busy = false;
+
+function startGame() {
+  document.getElementById('s-title').classList.add('off');
+  document.getElementById('s-game').classList.remove('off');
+  buildButtons();
+}
+
+function buildButtons() {
+  const area = document.getElementById('game-area');
+  area.innerHTML = '';
+  document.getElementById('hint').textContent = '집으로 가는 진짜 버튼을 찾아라';
+  realIdx   = Math.floor(Math.random() * TOTAL);
+  remaining = TOTAL;
+  busy      = false;
+
+  const positions = placeButtons(TOTAL);
+
+  for (let i = 0; i < TOTAL; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'hb';
+    btn.style.left = positions[i].x + 'px';
+    btn.style.top  = positions[i].y + 'px';
+
+    if (i === realIdx) {
+      btn.classList.add('real');
+      btn.innerHTML = `<span class="ico">🏠</span><span class="lbl">홈</span>`;
+    } else {
+      btn.classList.add('fake');
+      const lbl = LABELS[Math.floor(Math.random() * LABELS.length)];
+      const clr = COLORS[Math.floor(Math.random() * COLORS.length)];
+      btn.innerHTML = `<span class="ico">${lbl[0]}</span><span class="lbl">${lbl[1]}</span>`;
+      btn.style.background = clr.bg;
+      btn.style.color      = clr.color;
+      btn.style.boxShadow  = `0 2px 12px ${clr.sh}`;
+    }
+
+    btn.addEventListener('click', onBtnClick);
+    area.appendChild(btn);
+  }
+}
+
+function placeButtons(count) {
+  const S = 88, PAD = 18, TOP = 52;
+  const W = window.innerWidth, H = window.innerHeight;
+  const placed = [];
+  let tries = 0;
+  while (placed.length < count && tries < 5000) {
+    tries++;
+    const x = PAD + Math.random() * (W - S - PAD * 2);
+    const y = TOP + Math.random() * (H - S - TOP - PAD);
+    let ok = true;
+    for (const p of placed) {
+      const dx = p.x - x, dy = p.y - y;
+      if (Math.sqrt(dx*dx + dy*dy) < S + 6) { ok = false; break; }
+    }
+    if (ok) placed.push({ x, y });
+  }
+  return placed;
+}
+
+function onBtnClick(e) {
+  if (busy) return;
+  const btn = e.currentTarget;
+
+  if (btn.classList.contains('real')) {
+    busy = true;
+    playPop(true);
+    triggerEnding();
+    return;
+  }
+
+  // fake
+  playPop(false);
+  spawnParticles(btn);
+  btn.classList.add('popping');
+  btn.removeEventListener('click', onBtnClick);
+
+  setTimeout(() => {
+    btn.remove();
+    remaining--;
+    onRemaining();
+  }, 220);
+}
+
+function spawnParticles(btn) {
+  const rect = btn.getBoundingClientRect();
+  const cx = rect.left + rect.width  / 2;
+  const cy = rect.top  + rect.height / 2;
+  const color = btn.style.color || '#aaa';
+
+  for (let i = 0; i < 5; i++) {
+    const pt = document.createElement('div');
+    pt.className = 'pt';
+    const angle = (i / 5) * Math.PI * 2 + Math.random() * 0.6;
+    const dist  = 22 + Math.random() * 18;
+    pt.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+    pt.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+    pt.style.left       = (cx - 3.5) + 'px';
+    pt.style.top        = (cy - 3.5) + 'px';
+    pt.style.background = color;
+    document.body.appendChild(pt);
+    setTimeout(() => pt.remove(), 360);
+  }
+}
+
+function onRemaining() {
+  const real = document.querySelector('.hb.real');
+  if (!real) return;
+  if (remaining <= 10) real.classList.add('pulse');
+  if (remaining <= 4)  document.getElementById('hint').textContent = '거의 다 왔어요...';
+  if (remaining <= 1)  document.getElementById('hint').textContent = '';
+}
+
+/* ══════════════════════════════════════
+   ENDING
+══════════════════════════════════════ */
+function triggerEnding() {
+  const flash = document.getElementById('flash');
+  // fade to white
+  requestAnimationFrame(() => {
+    flash.style.transition = 'opacity 0.5s ease';
+    flash.style.opacity = '1';
+  });
+
+  setTimeout(() => {
+    document.getElementById('s-game').classList.add('off');
+    showEnding();
+  }, 600);
+
+  setTimeout(() => {
+    flash.style.transition = 'opacity 0.7s ease';
+    flash.style.opacity = '0';
+  }, 900);
+}
+
+function showEnding() {
+  const el = document.getElementById('s-ending');
+  el.classList.remove('off');
+  addStars();
+}
+
+function addStars() {
+  const win = document.getElementById('win');
+  // clear old
+  win.querySelectorAll('.star,.moon-el').forEach(e => e.remove());
+  for (let i = 0; i < 14; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left   = (5 + Math.random() * 88) + '%';
+    s.style.top    = (5 + Math.random() * 42) + '%';
+    s.style.animationDuration = (1.4 + Math.random() * 1.6) + 's';
+    s.style.animationDelay   = (Math.random() * 2) + 's';
+    win.appendChild(s);
+  }
+  const moon = document.createElement('div');
+  moon.className = 'moon-el';
+  win.appendChild(moon);
+}
+
+function replay() {
+  stopAmbient();
+  document.getElementById('ambientBtn').textContent = '♪ 빗소리 켜기';
+
+  const el = document.getElementById('s-ending');
+  el.classList.add('off');
+
+  // reset ending animations by re-cloning (simpler than toggling classes)
+  const msg = el.querySelector('.end-msg');
+  const reb = el.querySelector('.end-replay');
+  const amb = el.querySelector('.end-ambient');
+  [msg, reb, amb].forEach(n => {
+    n.style.animation = 'none';
+    void n.offsetWidth; // reflow
+    n.style.animation = '';
+  });
+
+  document.getElementById('s-game').classList.remove('off');
+  buildButtons();
+}
+</script>
+</body>
+</html>
