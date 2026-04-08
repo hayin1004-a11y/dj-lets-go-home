@@ -247,106 +247,154 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#dbeafe;touch-action
 .av-base-grid{display:flex;gap:.4rem;flex-wrap:wrap;}
 
 /* ════════════════════════════
-   CSS AVATAR (풀바디 3D)
+   CSS AVATAR — 크레이지아케이드 치비 스타일
 ════════════════════════════ */
 .av-char{
-  position:relative;
-  display:inline-block;
-  width:90px;height:140px;
+  position:relative;display:inline-block;
+  width:100px;height:120px;
 }
+/* ── 머리카락 (볼륨감) ── */
 .av-hair{
-  position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:48px;height:26px;
-  border-radius:50% 50% 0 0;
-  box-shadow:inset 0 -4px 6px rgba(0,0,0,.15);
+  position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+  width:76px;height:48px;
+  border-radius:55% 55% 0 0 / 75% 75% 0 0;
+  box-shadow:inset -4px -5px 8px rgba(0,0,0,.18);
+  z-index:3;
 }
+.av-hair-side{
+  position:absolute;height:22px;width:14px;
+  border-radius:50% 0 50% 50%;
+  top:20px;z-index:2;
+}
+.av-hair-side.l{left:calc(50% - 40px);}
+.av-hair-side.r{right:calc(50% - 40px);border-radius:0 50% 50% 50%;}
+/* ── 머리 (치비 = 전체의 60%) ── */
 .av-head{
-  position:absolute;top:10px;left:50%;transform:translateX(-50%);
-  width:44px;height:44px;border-radius:50%;
-  box-shadow:inset -3px -4px 8px rgba(0,0,0,.18),2px 3px 10px rgba(0,0,0,.15);
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:72px;height:72px;border-radius:50%;
+  box-shadow:inset -5px -6px 12px rgba(0,0,0,.14),2px 4px 14px rgba(0,0,0,.18);
+  z-index:2;
 }
-.av-head::after{/* highlight */
-  content:'';position:absolute;top:18%;left:22%;
-  width:10px;height:6px;border-radius:50%;
-  background:rgba(255,255,255,.35);
-  transform:rotate(-30deg);
+.av-head::before{/* 머리 하이라이트 */
+  content:'';position:absolute;top:12%;left:18%;
+  width:18px;height:12px;border-radius:50%;
+  background:rgba(255,255,255,.28);transform:rotate(-30deg);
 }
+/* ── 눈 (크고 반짝) ── */
 .av-eye{
-  position:absolute;top:40%;
-  width:7px;height:9px;border-radius:50%;
-  background:#2c1a0e;
-  box-shadow:1px 1px 0 rgba(255,255,255,.6);
+  position:absolute;top:44%;
+  width:13px;height:16px;border-radius:50%;
+  background:radial-gradient(circle at 35% 28%,#6b3fa0,#1a0838);
+  box-shadow:inset 3px 3px 0 rgba(255,255,255,.75);
+  z-index:4;
 }
-.av-eye.l{left:26%;}
-.av-eye.r{right:26%;}
+.av-eye.l{left:20%;}
+.av-eye.r{right:20%;}
+.av-eye::after{/* 눈 하이라이트 */
+  content:'';position:absolute;top:10%;right:10%;
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(255,255,255,.95);
+}
+/* ── 볼터치 ── */
 .av-blush{
-  position:absolute;top:54%;
-  width:9px;height:5px;border-radius:50%;
-  background:rgba(255,150,120,.42);
+  position:absolute;top:60%;
+  width:16px;height:9px;border-radius:50%;
+  background:rgba(255,150,130,.5);filter:blur(1.5px);
+  z-index:4;
 }
-.av-blush.l{left:16%;}
-.av-blush.r{right:16%;}
+.av-blush.l{left:8%;}
+.av-blush.r{right:8%;}
+/* ── 입 ── */
 .av-mouth{
-  position:absolute;bottom:20%;left:50%;transform:translateX(-50%);
-  width:12px;height:6px;
-  border-bottom:2.5px solid rgba(0,0,0,.3);
-  border-radius:0 0 10px 10px;
+  position:absolute;bottom:16%;left:50%;transform:translateX(-50%);
+  width:16px;height:8px;
+  border-bottom:3px solid rgba(140,60,50,.45);
+  border-radius:0 0 12px 12px;
+  z-index:4;
 }
+/* ── 모자 ── */
 .av-hat-ol{
-  position:absolute;top:-22px;left:50%;transform:translateX(-50%);
-  font-size:1.6rem;line-height:1;
+  position:absolute;top:-34px;left:50%;transform:translateX(-50%);
+  font-size:2.2rem;line-height:1;z-index:5;
 }
+/* ── 작고 통통한 몸통 ── */
 .av-body{
-  position:absolute;bottom:32%;left:50%;transform:translateX(-50%);
-  width:38px;height:40px;
-  border-radius:10px 10px 6px 6px;
-  box-shadow:inset -4px -5px 10px rgba(0,0,0,.18),2px 3px 10px rgba(0,0,0,.12);
+  position:absolute;bottom:24%;left:50%;transform:translateX(-50%);
+  width:46px;height:28px;
+  border-radius:16px 16px 10px 10px;
+  box-shadow:inset -3px -4px 8px rgba(0,0,0,.2),1px 3px 8px rgba(0,0,0,.14);
+  z-index:1;overflow:hidden;
 }
-.av-body::after{/* highlight */
-  content:'';position:absolute;top:12%;left:20%;
-  width:8px;height:14px;border-radius:4px;
-  background:rgba(255,255,255,.2);
+.av-body::before{/* 몸통 하이라이트 */
+  content:'';position:absolute;top:10%;left:18%;
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,.25);
+}
+/* 의상 장식 (칼라) */
+.av-collar{
+  position:absolute;top:-5px;left:50%;transform:translateX(-50%);
+  width:22px;height:10px;border-radius:50% 50% 0 0;
+  z-index:3;
+}
+.av-emblem{
+  position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  font-size:.7rem;line-height:1;z-index:3;
 }
 .av-wpn-ol{
-  position:absolute;right:-18px;top:8px;
-  font-size:1.2rem;line-height:1;
+  position:absolute;right:-22px;top:4px;
+  font-size:1.5rem;line-height:1;z-index:5;
 }
+/* ── 통통한 팔 ── */
 .av-arm{
   position:absolute;
-  width:11px;height:30px;border-radius:5px;
-  box-shadow:inset -2px -3px 6px rgba(0,0,0,.15),1px 2px 5px rgba(0,0,0,.1);
+  width:13px;height:22px;border-radius:7px;
+  box-shadow:inset -2px -3px 5px rgba(0,0,0,.16),1px 2px 5px rgba(0,0,0,.1);
+  z-index:0;
 }
-.av-arm.l{left:10%;bottom:34%;transform:rotate(10deg);}
-.av-arm.r{right:10%;bottom:34%;transform:rotate(-10deg);}
+.av-arm.l{left:9%;bottom:28%;transform:rotate(14deg);}
+.av-arm.r{right:9%;bottom:28%;transform:rotate(-14deg);}
+/* ── 통통한 다리 ── */
 .av-legs{
   position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-  display:flex;gap:4px;
+  display:flex;gap:5px;
 }
 .av-leg{
-  width:14px;height:36px;
-  border-radius:4px 4px 0 0;
-  box-shadow:inset -2px -3px 6px rgba(0,0,0,.15),1px 2px 5px rgba(0,0,0,.08);
+  width:16px;height:24px;
+  border-radius:6px 6px 2px 2px;
+  box-shadow:inset -2px -3px 5px rgba(0,0,0,.16),1px 2px 4px rgba(0,0,0,.1);
   position:relative;
 }
+/* ── 동글동글 신발 ── */
 .av-shoe{
-  position:absolute;bottom:-6px;left:-2px;
-  width:18px;height:8px;
-  background:#2c3e50;
-  border-radius:4px 8px 6px 4px;
-  box-shadow:0 2px 4px rgba(0,0,0,.3);
+  position:absolute;bottom:-8px;left:-4px;
+  width:23px;height:11px;
+  border-radius:7px 12px 10px 7px;
+  box-shadow:0 3px 5px rgba(0,0,0,.25);
 }
-.av-shoe.r{left:auto;right:-2px;border-radius:8px 4px 4px 6px;}
+.av-shoe.r{left:auto;right:-4px;border-radius:12px 7px 7px 10px;}
+/* ── 액세서리 ── */
 .av-acc-ol{
-  position:absolute;left:-16px;bottom:6px;
-  font-size:1.1rem;
+  position:absolute;left:-20px;bottom:6px;
+  font-size:1.4rem;z-index:5;
 }
-
-/* growth stage variations */
-.av-char[data-g="baby"] .av-head{width:50px;height:50px;top:6px;}
-.av-char[data-g="baby"] .av-hair{width:54px;}
-.av-char[data-g="baby"] .av-body{width:34px;height:34px;}
-.av-char[data-g="teen"] .av-leg{height:42px;}
-.av-char[data-g="adult"] .av-leg{height:48px;}
+/* ── 성장 단계별 비율 ── */
+.av-char[data-g="baby"] .av-head{width:80px;height:80px;}
+.av-char[data-g="baby"] .av-hair{width:86px;height:54px;}
+.av-char[data-g="baby"] .av-body{width:38px;height:22px;bottom:20%;}
+.av-char[data-g="baby"] .av-leg{height:18px;}
+.av-char[data-g="toddler"] .av-head{width:76px;height:76px;}
+.av-char[data-g="toddler"] .av-hair{width:82px;}
+.av-char[data-g="toddler"] .av-leg{height:20px;}
+.av-char[data-g="child"] .av-leg{height:24px;}
+.av-char[data-g="teen"] .av-head{width:70px;height:70px;}
+.av-char[data-g="teen"] .av-hair{width:76px;}
+.av-char[data-g="teen"] .av-leg{height:28px;}
+.av-char[data-g="adult"] .av-head{width:66px;height:66px;}
+.av-char[data-g="adult"] .av-hair{width:72px;}
+.av-char[data-g="adult"] .av-leg{height:30px;}
+/* ── 점프 애니메이션 (메뉴에서 idle) ── */
+@keyframes chibiIdle{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+.av-char{animation:chibiIdle 2.4s ease-in-out infinite;}
 
 /* ════════════════════════════
    PAUSE
@@ -695,25 +743,36 @@ const SKIN_COLORS=[
 ];
 const HAIR_COLORS=['#3d2314','#1a1a1a','#d4a520','#8b3a20','#7a5030'];
 const HAIR_NAMES=['다크브라운','블랙','블론드','레드','브라운'];
-const OUTFIT_COLORS={
-  out_star:  {light:'#fde68a',dark:'#f59e0b'},
-  out_shield:{light:'#c7d2fe',dark:'#6366f1'},
-  out_cape:  {light:'#fca5a5',dark:'#ef4444'},
-  default:   {light:'#93c5fd',dark:'#3b82f6'},
-};
 const SHOP_ITEMS=[
-  {id:'hat_crown', name:'왕관',       type:'hat',      ico:'👑',price:500, desc:'왕의 위엄'},
-  {id:'hat_cap',   name:'야구모자',   type:'hat',      ico:'🧢',price:150, desc:'편안한 일상'},
-  {id:'hat_witch', name:'마법모자',   type:'hat',      ico:'🎩',price:350, desc:'마법사의 지혜'},
-  {id:'hat_santa', name:'산타모자',   type:'hat',      ico:'🎅',price:250, desc:'Ho ho ho!'},
-  {id:'out_star',  name:'별 배지',    type:'outfit',   ico:'⭐',price:200, desc:'빛나는 별'},
-  {id:'out_shield',name:'방패',       type:'outfit',   ico:'🛡️',price:450, desc:'완벽한 수호'},
-  {id:'out_cape',  name:'슈퍼망토',   type:'outfit',   ico:'🦸',price:700, desc:'히어로의 힘'},
-  {id:'wpn_sword', name:'점수의 검',  type:'weapon',   ico:'⚔️',price:800, desc:'5스테이지 점수 2배',mult:2,uses:5},
-  {id:'wpn_wand',  name:'마법봉',     type:'weapon',   ico:'🪄',price:2000,desc:'3스테이지 점수 3배',mult:3,uses:3},
-  {id:'wpn_rocket',name:'로켓 부스터',type:'weapon',   ico:'🚀',price:5000,desc:'2스테이지 점수 5배',mult:5,uses:2},
-  {id:'acc_lucky', name:'행운의 별',  type:'accessory',ico:'🌟',price:400, desc:'스페셜 확률+10%'},
-  {id:'acc_gem',   name:'루비 보석',  type:'accessory',ico:'💎',price:1200,desc:'상점 10% 할인'},
+  // ── 모자 ──
+  {id:'hat_crown',  name:'왕관',       type:'hat', ico:'👑', price:500,  desc:'✨ 왕의 위엄! 반짝반짝'},
+  {id:'hat_cap',    name:'야구모자',   type:'hat', ico:'🧢', price:150,  desc:'😎 편안하고 스포티'},
+  {id:'hat_ribbon', name:'리본 머리띠',type:'hat', ico:'🎀', price:200,  desc:'🩷 너무 귀여워~'},
+  {id:'hat_santa',  name:'산타모자',   type:'hat', ico:'🎅', price:250,  desc:'🎄 Ho ho ho!'},
+  {id:'hat_cat',    name:'고양이 귀',  type:'hat', ico:'🐱', price:300,  desc:'😺 냥~ 귀여워'},
+  {id:'hat_party',  name:'파티햇',     type:'hat', ico:'🎉', price:180,  desc:'🥳 오늘은 파티!'},
+  {id:'hat_flower', name:'꽃 머리띠',  type:'hat', ico:'🌸', price:220,  desc:'🌸 봄봄봄 봄이 왔어요'},
+  {id:'hat_devil',  name:'악마 뿔',    type:'hat', ico:'😈', price:400,  desc:'😈 짓궂은 장난꾸러기'},
+  // ── 의상 ──
+  {id:'out_school',  name:'교복',      type:'outfit', ico:'📚', price:300,  desc:'👔 바른 학생 모드!'},
+  {id:'out_chef',    name:'요리사 복', type:'outfit', ico:'👨‍🍳',price:400,  desc:'🍳 오늘의 요리는?'},
+  {id:'out_princess',name:'공주 드레스',type:'outfit',ico:'👸', price:600,  desc:'💕 반짝이는 공주님'},
+  {id:'out_dino',    name:'공룡 옷',   type:'outfit', ico:'🦕', price:500,  desc:'🦕 귀여운 공룡~'},
+  {id:'out_space',   name:'우주복',    type:'outfit', ico:'🚀', price:700,  desc:'🌌 우주를 누벼요'},
+  {id:'out_ninja',   name:'닌자 복',   type:'outfit', ico:'🥷', price:650,  desc:'💨 쉿! 아무도 몰라'},
+  {id:'out_bear',    name:'곰돌이 후드',type:'outfit', ico:'🐻', price:450,  desc:'🍯 꿀처럼 달콤해'},
+  {id:'out_witch',   name:'마법사 로브',type:'outfit',ico:'🔮', price:800,  desc:'✨ 마법을 부려볼까'},
+  {id:'out_sports',  name:'운동복',    type:'outfit', ico:'⚽', price:350,  desc:'💪 운동 시작!'},
+  {id:'out_summer',  name:'여름 옷',   type:'outfit', ico:'🌺', price:280,  desc:'☀️ 신나는 여름'},
+  // ── 무기 (점수 배율) ──
+  {id:'wpn_sword',  name:'점수의 검',  type:'weapon', ico:'⚔️',price:800,  desc:'5스테이지 점수 2배',mult:2,uses:5},
+  {id:'wpn_wand',   name:'마법봉',     type:'weapon', ico:'🪄',price:2000, desc:'3스테이지 점수 3배',mult:3,uses:3},
+  {id:'wpn_rocket', name:'로켓 부스터',type:'weapon', ico:'🚀',price:5000, desc:'2스테이지 점수 5배',mult:5,uses:2},
+  // ── 액세서리 ──
+  {id:'acc_lucky',  name:'행운의 별',  type:'accessory', ico:'🌟',price:400,  desc:'스페셜 확률+10%'},
+  {id:'acc_gem',    name:'루비 보석',  type:'accessory', ico:'💎',price:1200, desc:'상점 10% 할인'},
+  {id:'acc_rainbow',name:'무지개 날개',type:'accessory', ico:'🌈',price:900,  desc:'🌈 꿈을 향해 날자'},
+  {id:'acc_heart',  name:'하트 지팡이',type:'accessory', ico:'💖',price:600,  desc:'💖 사랑을 전해요'},
 ];
 const SPECIALS=[
   {id:'jungle', name:'정글 탈출',  ico:'🌴',bg:'linear-gradient(145deg,#052a05,#0a3a0a)',engine:'tap',   enemies:['🐒','🦎','🌿'],goal:'👦',boss:'🦍'},
@@ -841,34 +900,60 @@ function calcLevel(sv){
 function levelMult(sv){return 1+((calcLevel(sv)-1)*0.1);} // 레벨당 점수 10% 가산
 
 /* ═══════ RENDER AVATAR ═══════ */
+// 의상별 색상 정의
+const OUTFIT_DEFS={
+  // 기본
+  default:{body:'#93c5fd',bodyD:'#3b82f6',leg:'#4b6cb7',shoe:'#2c3e50',collar:null,emblem:''},
+  // 상점 의상
+  out_school:  {body:'#ffffff',bodyD:'#e2e8f0',leg:'#1e3a5f',shoe:'#2c3e50',collar:'#2563eb',emblem:'📚'},
+  out_chef:    {body:'#ffffff',bodyD:'#f1f5f9',leg:'#374151',shoe:'#111827',collar:'#ef4444',emblem:'🍳'},
+  out_princess:{body:'#fce7f3',bodyD:'#f9a8d4',leg:'#db2777',shoe:'#be185d',collar:'#f472b6',emblem:'👸'},
+  out_dino:    {body:'#bbf7d0',bodyD:'#4ade80',leg:'#16a34a',shoe:'#166534',collar:'#22c55e',emblem:'🦕'},
+  out_space:   {body:'#1e3a5f',bodyD:'#0f172a',leg:'#334155',shoe:'#1e293b',collar:'#60a5fa',emblem:'🚀'},
+  out_ninja:   {body:'#1c1c2e',bodyD:'#0f0f1a',leg:'#0f0f1a',shoe:'#000',collar:'#ef4444',emblem:'⭐'},
+  out_bear:    {body:'#d97706',bodyD:'#b45309',leg:'#92400e',shoe:'#78350f',collar:'#fbbf24',emblem:'🐻'},
+  out_witch:   {body:'#4c1d95',bodyD:'#2e1065',leg:'#2e1065',shoe:'#1a0f3c',collar:'#7c3aed',emblem:'🔮'},
+  out_sports:  {body:'#dc2626',bodyD:'#991b1b',leg:'#ffffff',shoe:'#dc2626',collar:'#fbbf24',emblem:'⚽'},
+  out_summer:  {body:'#fb923c',bodyD:'#ea580c',leg:'#fef08a',shoe:'#ca8a04',collar:'#fdba74',emblem:'🌺'},
+};
+
 function renderAvatarHTML(opts){
   const{skin=0,hair=0,hat=null,outfit=null,weapon=null,accessory=null,sv=null,size='md'}=opts;
   const sk=SKIN_COLORS[skin]||SKIN_COLORS[0];
   const hc=HAIR_COLORS[hair]||HAIR_COLORS[0];
-  const oc=OUTFIT_COLORS[outfit]||OUTFIT_COLORS.default;
+  const od=OUTFIT_DEFS[outfit]||OUTFIT_DEFS.default;
   const st=sv?avStats(sv):{height:60,weight:5.0};
   const g=growthStage(st.height);
-  const scales={sm:.65,md:1,lg:1.3};
+  const scales={sm:.6,md:1,lg:1.35};
   const sc=scales[size]||1;
   const hatIco=hat?itemById(hat)?.ico:'';
   const wpnIco=weapon?(itemById(weapon.id||weapon)?.ico||''):'';
   const accIco=accessory?itemById(accessory)?.ico:'';
-  return `<div class="av-char" data-g="${g}" style="transform:scale(${sc});transform-origin:bottom center;">
-    <div class="av-hair" style="background:radial-gradient(circle at 40% 20%,${adjustColor(hc,.3)},${hc})"></div>
-    <div class="av-head" style="background:radial-gradient(circle at 35% 30%,${sk.light},${sk.dark})">
+  const hcLight=adjustColor(hc,.28);
+  return `<div class="av-char" data-g="${g}" style="transform:scale(${sc});transform-origin:bottom center;animation:${size==='sm'?'none':'chibiIdle 2.4s ease-in-out infinite'};">
+    <div class="av-hair" style="background:radial-gradient(circle at 38% 22%,${hcLight},${hc})"></div>
+    <div class="av-hair-side l" style="background:radial-gradient(circle at 40% 30%,${hcLight},${hc})"></div>
+    <div class="av-hair-side r" style="background:radial-gradient(circle at 60% 30%,${hcLight},${hc})"></div>
+    <div class="av-head" style="background:radial-gradient(circle at 38% 28%,${sk.light},${sk.dark})">
       <div class="av-eye l"></div><div class="av-eye r"></div>
       <div class="av-blush l"></div><div class="av-blush r"></div>
       <div class="av-mouth"></div>
       ${hatIco?`<div class="av-hat-ol">${hatIco}</div>`:''}
     </div>
-    <div class="av-body" style="background:radial-gradient(circle at 30% 25%,${oc.light},${oc.dark})">
+    <div class="av-body" style="background:radial-gradient(circle at 32% 22%,${od.body},${od.bodyD})">
+      ${od.collar?`<div class="av-collar" style="background:${od.collar}"></div>`:''}
+      ${od.emblem?`<div class="av-emblem">${od.emblem}</div>`:''}
       ${wpnIco?`<div class="av-wpn-ol">${wpnIco}</div>`:''}
     </div>
-    <div class="av-arm l" style="background:radial-gradient(circle at 30% 25%,${oc.light},${oc.dark})"></div>
-    <div class="av-arm r" style="background:radial-gradient(circle at 30% 25%,${oc.light},${oc.dark})"></div>
+    <div class="av-arm l" style="background:radial-gradient(circle at 35% 25%,${sk.light},${sk.dark})"></div>
+    <div class="av-arm r" style="background:radial-gradient(circle at 35% 25%,${sk.light},${sk.dark})"></div>
     <div class="av-legs">
-      <div class="av-leg" style="background:radial-gradient(circle at 35% 25%,#93c5fd,#3b82f6)"><div class="av-shoe"></div></div>
-      <div class="av-leg" style="background:radial-gradient(circle at 35% 25%,#93c5fd,#3b82f6)"><div class="av-shoe r"></div></div>
+      <div class="av-leg" style="background:radial-gradient(circle at 35% 20%,${adjustColor(od.leg,.18)},${od.leg})">
+        <div class="av-shoe" style="background:${od.shoe}"></div>
+      </div>
+      <div class="av-leg" style="background:radial-gradient(circle at 35% 20%,${adjustColor(od.leg,.18)},${od.leg})">
+        <div class="av-shoe r" style="background:${od.shoe}"></div>
+      </div>
     </div>
     ${accIco?`<div class="av-acc-ol">${accIco}</div>`:''}
   </div>`;
