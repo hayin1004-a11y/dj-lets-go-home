@@ -120,31 +120,42 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#dbeafe;touch-action
 #game-area{position:absolute;inset:0;}
 #g-hint{position:absolute;top:46px;left:50%;transform:translateX(-50%);background:#fff;border:2px dashed #93c5fd;border-radius:14px;padding:3px 13px;font-size:.72rem;font-weight:700;color:#3b82f6;white-space:nowrap;z-index:20;pointer-events:none;}
 
-/* ── 홈버튼 (아이콘화) ── */
+/* ── 홈버튼 (원형 앱아이콘 스타일) ── */
 .hb{
-  position:absolute;width:68px;height:68px;
-  border:2.5px solid;border-radius:18px;
+  position:absolute;width:64px;height:64px;
+  border:none;border-radius:50%;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:2rem;
-  box-shadow:2px 3px 0 var(--sh);
-  transition:all .12s;user-select:none;
-  will-change:transform;
+  box-shadow:0 4px 12px rgba(0,0,0,.22),0 2px 4px rgba(0,0,0,.15);
+  transition:all .12s;user-select:none;will-change:transform;
+  padding:0;overflow:hidden;
 }
-.hb:active{transform:translate(2px,3px)!important;box-shadow:0 1px 0 var(--sh)!important;}
-.hb.fake:hover{transform:translateY(-2px);box-shadow:2px 5px 0 var(--sh);}
+.hb:active{transform:scale(.88)!important;box-shadow:0 2px 6px rgba(0,0,0,.18)!important;}
+.hb.fake:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 8px 18px rgba(0,0,0,.28);}
 .hb.escaping{animation:escWig .4s ease-in-out infinite;}
 @keyframes escWig{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
-.hb.tough{border-width:3px;}
+.hb.tough{box-shadow:0 4px 12px rgba(0,0,0,.22),0 0 0 3px rgba(255,255,255,.5);}
+/* 집 아이콘 SVG (흰색 실루엣) */
+.hb-icon{
+  width:36px;height:36px;
+  background:rgba(255,255,255,.95);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E") center/contain no-repeat;
+  pointer-events:none;flex-shrink:0;
+}
 /* 진짜 버튼 */
-.hb.real{background:#fff!important;border-color:#2563eb!important;--sh:#2563eb;color:#1d4ed8!important;}
+.hb.real{background:linear-gradient(145deg,#3b82f6,#2563eb)!important;box-shadow:0 4px 16px rgba(37,99,235,.55),0 2px 6px rgba(0,0,0,.2)!important;}
+.hb.real .hb-icon{background:rgba(255,255,255,1);}
 .hb.real.pulse{animation:rPulse 2s ease-in-out infinite;}
-@keyframes rPulse{0%,100%{box-shadow:2px 3px 0 #2563eb;}50%{box-shadow:2px 3px 0 #2563eb,0 0 18px rgba(37,99,235,.45);}}
+@keyframes rPulse{
+  0%,100%{box-shadow:0 4px 16px rgba(37,99,235,.55),0 2px 6px rgba(0,0,0,.2);}
+  50%{box-shadow:0 4px 16px rgba(37,99,235,.55),0 0 28px rgba(59,130,246,.7),0 2px 6px rgba(0,0,0,.2);}
+}
 /* 팝 */
 .hb.popping{animation:popOut .2s ease-in forwards;pointer-events:none;}
-@keyframes popOut{0%{transform:scale(1);opacity:1;}30%{transform:scale(1.12);}100%{transform:scale(0);opacity:0;}}
+@keyframes popOut{0%{transform:scale(1);opacity:1;}30%{transform:scale(1.15);}100%{transform:scale(0);opacity:0;}}
 /* 파티클 */
-.pt{position:fixed;width:7px;height:7px;border-radius:50%;pointer-events:none;animation:ptFly .32s ease-out forwards;z-index:999;}
-@keyframes ptFly{0%{transform:translate(0,0) scale(1);opacity:.75;}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0;}}
+.pt{position:fixed;width:8px;height:8px;border-radius:50%;pointer-events:none;animation:ptFly .35s ease-out forwards;z-index:999;}
+@keyframes ptFly{0%{transform:translate(0,0) scale(1);opacity:.9;}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0;}}
 
 /* ════════════════════════════
    STAGE CLEAR
@@ -832,14 +843,16 @@ const QUIZ_QUESTIONS=[
 ];
 
 // 아이콘화된 홈버튼 스타일 (텍스트 없음)
+// 원형 앱아이콘 스타일 — 배경색만 사용
 const BTN_STYLES=[
-  {bg:'#dbeafe',bc:'#93c5fd',sh:'#93c5fd',ico:'🏠'},
-  {bg:'#ede9fe',bc:'#c4b5fd',sh:'#c4b5fd',ico:'🏠'},
-  {bg:'#dcfce7',bc:'#86efac',sh:'#86efac',ico:'🏡'},
-  {bg:'#fef9c3',bc:'#fde047',sh:'#fde047',ico:'🏠'},
-  {bg:'#fce7f3',bc:'#f9a8d4',sh:'#f9a8d4',ico:'🏡'},
-  {bg:'#ccfbf1',bc:'#6ee7b7',sh:'#6ee7b7',ico:'🏠'},
-  {bg:'#e0f2fe',bc:'#7dd3fc',sh:'#7dd3fc',ico:'🏡'},
+  {bg:'linear-gradient(145deg,#60a5fa,#3b82f6)'},
+  {bg:'linear-gradient(145deg,#a78bfa,#7c3aed)'},
+  {bg:'linear-gradient(145deg,#34d399,#059669)'},
+  {bg:'linear-gradient(145deg,#fbbf24,#d97706)'},
+  {bg:'linear-gradient(145deg,#f472b6,#db2777)'},
+  {bg:'linear-gradient(145deg,#2dd4bf,#0d9488)'},
+  {bg:'linear-gradient(145deg,#fb923c,#ea580c)'},
+  {bg:'linear-gradient(145deg,#94a3b8,#475569)'},
 ];
 
 const TOTAL_DIST=4500000000; // 해왕성까지 45억km
@@ -1134,14 +1147,12 @@ function buildButtons(cfg){
     btn.className='hb';
     const p=positions[i];btn.style.left=p.x+'px';btn.style.top=p.y+'px';
     if(i===gState.realIdx){
-      btn.classList.add('real');btn.innerHTML='🏠';btn.dataset.real='1';
-      btn.style.setProperty('--sh','#2563eb');
+      btn.classList.add('real');btn.innerHTML='<div class="hb-icon"></div>';btn.dataset.real='1';
     }else{
       btn.classList.add('fake');
       const st=BTN_STYLES[Math.floor(Math.random()*BTN_STYLES.length)];
-      btn.innerHTML=st.ico;
-      btn.style.background=st.bg;btn.style.borderColor=st.bc;btn.style.setProperty('--sh',st.sh);
-      btn.style.color='rgba(0,0,0,.4)';
+      btn.innerHTML='<div class="hb-icon"></div>';
+      btn.style.background=st.bg;
       if(cfg.escape&&Math.random()<.28)btn.classList.add('escaping');
       if(cfg.tough&&Math.random()<.22){btn.classList.add('tough');btn.dataset.hp='3';}
       // 스페셜/착한일/학습 트리거 — 완전 랜덤
@@ -1213,7 +1224,7 @@ function spawnExtra(){
   if(area.querySelectorAll('.hb.fake').length>75)return;
   const btn=document.createElement('button');btn.className='hb fake';
   const st=BTN_STYLES[Math.floor(Math.random()*BTN_STYLES.length)];
-  btn.innerHTML=st.ico;btn.style.background=st.bg;btn.style.borderColor=st.bc;btn.style.setProperty('--sh',st.sh);btn.style.color='rgba(0,0,0,.4)';
+  btn.innerHTML='<div class="hb-icon"></div>';btn.style.background=st.bg;
   btn.style.left=(14+Math.random()*(window.innerWidth-90))+'px';btn.style.top=(50+Math.random()*(window.innerHeight-110))+'px';
   btn.style.animation='enemyIn .25s ease';btn.addEventListener('click',onBtnClick);
   area.appendChild(btn);gState.remaining++;
