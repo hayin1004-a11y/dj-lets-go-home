@@ -142,14 +142,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#dbeafe;touch-action
   mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E") center/contain no-repeat;
   pointer-events:none;flex-shrink:0;
 }
-/* 진짜 버튼 */
-.hb.real{background:linear-gradient(145deg,#3b82f6,#2563eb)!important;box-shadow:0 4px 16px rgba(37,99,235,.55),0 2px 6px rgba(0,0,0,.2)!important;}
-.hb.real .hb-icon{background:rgba(255,255,255,1);}
-.hb.real.pulse{animation:rPulse 2s ease-in-out infinite;}
-@keyframes rPulse{
-  0%,100%{box-shadow:0 4px 16px rgba(37,99,235,.55),0 2px 6px rgba(0,0,0,.2);}
-  50%{box-shadow:0 4px 16px rgba(37,99,235,.55),0 0 28px rgba(59,130,246,.7),0 2px 6px rgba(0,0,0,.2);}
-}
+/* 진짜 버튼 — 가짜와 동일하게 보임 */
+.hb.real.pulse{animation:none;}
 /* 팝 */
 .hb.popping{animation:popOut .2s ease-in forwards;pointer-events:none;}
 @keyframes popOut{0%{transform:scale(1);opacity:1;}30%{transform:scale(1.15);}100%{transform:scale(0);opacity:0;}}
@@ -1148,6 +1142,8 @@ function buildButtons(cfg){
     const p=positions[i];btn.style.left=p.x+'px';btn.style.top=p.y+'px';
     if(i===gState.realIdx){
       btn.classList.add('real');btn.innerHTML='<div class="hb-icon"></div>';btn.dataset.real='1';
+      const rst=BTN_STYLES[Math.floor(Math.random()*BTN_STYLES.length)];
+      btn.style.background=rst.bg;
     }else{
       btn.classList.add('fake');
       const st=BTN_STYLES[Math.floor(Math.random()*BTN_STYLES.length)];
