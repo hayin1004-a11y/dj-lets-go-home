@@ -925,44 +925,26 @@ const OUTFIT_DEFS={
 };
 
 function renderAvatarHTML(opts){
-  const{skin=0,hair=0,hat=null,outfit=null,weapon=null,accessory=null,sv=null,size='md'}=opts;
-  const sk=SKIN_COLORS[skin]||SKIN_COLORS[0];
-  const hc=HAIR_COLORS[hair]||HAIR_COLORS[0];
-  const od=OUTFIT_DEFS[outfit]||OUTFIT_DEFS.default;
+  const{hat=null,outfit=null,weapon=null,accessory=null,sv=null,size='md'}=opts;
   const st=sv?avStats(sv):{height:60,weight:5.0};
   const g=growthStage(st.height);
-  const scales={sm:.6,md:1,lg:1.35};
-  const sc=scales[size]||1;
+  const szMap={sm:70,md:110,lg:150};
+  const px=szMap[size]||110;
   const hatIco=hat?itemById(hat)?.ico:'';
   const wpnIco=weapon?(itemById(weapon.id||weapon)?.ico||''):'';
   const accIco=accessory?itemById(accessory)?.ico:'';
-  const hcLight=adjustColor(hc,.28);
-  return `<div class="av-char" data-g="${g}" style="transform:scale(${sc});transform-origin:bottom center;animation:${size==='sm'?'none':'chibiIdle 2.4s ease-in-out infinite'};">
-    <div class="av-hair" style="background:radial-gradient(circle at 38% 22%,${hcLight},${hc})"></div>
-    <div class="av-hair-side l" style="background:radial-gradient(circle at 40% 30%,${hcLight},${hc})"></div>
-    <div class="av-hair-side r" style="background:radial-gradient(circle at 60% 30%,${hcLight},${hc})"></div>
-    <div class="av-head" style="background:radial-gradient(circle at 38% 28%,${sk.light},${sk.dark})">
-      <div class="av-eye l"></div><div class="av-eye r"></div>
-      <div class="av-blush l"></div><div class="av-blush r"></div>
-      <div class="av-mouth"></div>
-      ${hatIco?`<div class="av-hat-ol">${hatIco}</div>`:''}
-    </div>
-    <div class="av-body" style="background:radial-gradient(circle at 32% 22%,${od.body},${od.bodyD})">
-      ${od.collar?`<div class="av-collar" style="background:${od.collar}"></div>`:''}
-      ${od.emblem?`<div class="av-emblem">${od.emblem}</div>`:''}
-      ${wpnIco?`<div class="av-wpn-ol">${wpnIco}</div>`:''}
-    </div>
-    <div class="av-arm l" style="background:radial-gradient(circle at 35% 25%,${sk.light},${sk.dark})"></div>
-    <div class="av-arm r" style="background:radial-gradient(circle at 35% 25%,${sk.light},${sk.dark})"></div>
-    <div class="av-legs">
-      <div class="av-leg" style="background:radial-gradient(circle at 35% 20%,${adjustColor(od.leg,.18)},${od.leg})">
-        <div class="av-shoe" style="background:${od.shoe}"></div>
-      </div>
-      <div class="av-leg" style="background:radial-gradient(circle at 35% 20%,${adjustColor(od.leg,.18)},${od.leg})">
-        <div class="av-shoe r" style="background:${od.shoe}"></div>
-      </div>
-    </div>
-    ${accIco?`<div class="av-acc-ol">${accIco}</div>`:''}
+  const outfitIco=outfit?itemById(outfit)?.ico:'';
+  // 성장 단계별 필터 (아기는 작게, 성인은 크게)
+  const gScale={baby:.7,toddler:.82,child:.92,teen:1,adult:1.08}[g]||1;
+  const finalPx=Math.round(px*gScale);
+  return `<div class="av-char" data-g="${g}" style="width:${finalPx}px;height:${Math.round(finalPx*1.45)}px;animation:${size==='sm'?'none':'chibiIdle 2.4s ease-in-out infinite'};">
+    <img src="images/귀여운 소년의 아기자기한 모습.png"
+      style="width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply;display:block;"
+      draggable="false">
+    ${hatIco?`<div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:${Math.round(px*.22)}px;line-height:1;z-index:5;">${hatIco}</div>`:''}
+    ${outfitIco?`<div style="position:absolute;top:42%;left:50%;transform:translateX(-50%);font-size:${Math.round(px*.18)}px;line-height:1;z-index:5;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3));">${outfitIco}</div>`:''}
+    ${wpnIco?`<div style="position:absolute;right:-${Math.round(px*.22)}px;top:35%;font-size:${Math.round(px*.2)}px;line-height:1;z-index:5;">${wpnIco}</div>`:''}
+    ${accIco?`<div style="position:absolute;left:-${Math.round(px*.2)}px;bottom:18%;font-size:${Math.round(px*.18)}px;line-height:1;z-index:5;">${accIco}</div>`:''}
   </div>`;
 }
 function adjustColor(hex,amt){
