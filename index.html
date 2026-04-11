@@ -1955,7 +1955,7 @@ function startGoodDeed(){
   const shuffled=[...deed.choices].sort(()=>Math.random()-.5);
   shuffled.forEach((ch,i)=>{
     const btn=document.createElement('button');
-    btn.className='good-choice';btn.textContent=ch.text;
+    btn.className='good-choice';btn.dataset.correct=ch.correct?'1':'0';btn.textContent=ch.text.replace(/^[^\p{L}\p{N}((\[]+\s*/u,'');
     btn.onclick=()=>{
       if(goodState.done)return;goodState.done=true;
       chEl.querySelectorAll('.good-choice').forEach(b=>b.disabled=true);
@@ -1968,7 +1968,7 @@ function startGoodDeed(){
       }else{
         btn.classList.add('wrong');
         // 정답 강조
-        chEl.querySelectorAll('.good-choice').forEach(b=>{if(b.textContent===deed.choices.find(c=>c.correct).text)b.classList.add('correct');});
+        chEl.querySelectorAll('.good-choice').forEach(b=>{if(b.dataset.correct==='1')b.classList.add('correct');});
         document.getElementById('good-result').innerHTML='<span style="color:#f87171">💭 다음엔 더 잘 할 수 있어요.</span>';
       }
       setTimeout(()=>returnFromGoodQuiz(),2000);
@@ -1991,11 +1991,7 @@ function startQuiz(){
   document.getElementById('quiz-subj').textContent=q.subject;
   document.getElementById('quiz-q').textContent=q.q;
   document.getElementById('quiz-result').textContent='';
-  let t=15;document.getElementById('quiz-timer').textContent=t+'초';
-  quizState.timer=setInterval(()=>{
-    t--;document.getElementById('quiz-timer').textContent=t+'초';
-    if(t<=0){clearInterval(quizState.timer);if(!quizState.done){quizState.done=true;document.getElementById('quiz-result').innerHTML='<span style="color:#f87171">⏱ 시간 초과!</span>';disableQuizOpts();setTimeout(()=>returnFromGoodQuiz(),1800);}}
-  },1000);
+  document.getElementById('quiz-timer').textContent='';
   const optsEl=document.getElementById('quiz-opts');optsEl.innerHTML='';
   q.opts.forEach((opt,i)=>{
     const btn=document.createElement('button');btn.className='quiz-opt';btn.textContent=opt;
